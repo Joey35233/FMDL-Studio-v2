@@ -477,13 +477,13 @@ namespace FmdlStudio.Scripts.Classes
                     stream.Close();
                     EditorUtility.ClearProgressBar();
                 } //try
-                catch (Exception e)
+                finally //catch (Exception e)
                 {
                     stream.Close();
-                    Debug.Log($"{e.Message} The stream was at offset 0x{stream.Position.ToString("x")} when this exception occured.");
-                    Debug.Log($"An exception occured{e.StackTrace}");
+                    //Debug.Log($"{e.Message} The stream was at offset 0x{stream.Position.ToString("x")} when this exception occured.");
+                    //Debug.Log($"An exception occured{e.StackTrace}");
                     EditorUtility.ClearProgressBar();
-                } //catch
+                } //finally ////catch
             } //using
         } //Read
 
@@ -1157,12 +1157,12 @@ namespace FmdlStudio.Scripts.Classes
                 GetFmdlData(gameObject);
                 WriteFmdlData(filePath);
             } //try
-            catch (Exception e)
+            finally //catch (Exception e)
             {
-                Debug.Log($"{e.Message}");
-                Debug.Log($"An exception occured{e.StackTrace}");
+                //Debug.Log($"{e.Message}");
+                //Debug.Log($"An exception occured{e.StackTrace}");
                 EditorUtility.ClearProgressBar();
-            } //catch
+            }//finally ////catch
         } //Write
 
         private void GetFmdlData(GameObject gameObject)

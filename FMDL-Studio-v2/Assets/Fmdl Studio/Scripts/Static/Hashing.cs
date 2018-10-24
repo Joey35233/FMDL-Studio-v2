@@ -308,5 +308,20 @@ namespace FmdlStudio.Scripts.Static
 
             return (hash - 0x1568000000000000).ToString("x");
         } //TryGetStringName
+
+        public static bool TryGetPathName(ulong hash, out string result)
+        {
+            for (int i = 0; i < pathHashDictionary.Count; i++)
+            {
+                if (hash - 0x1568000000000000 == pathHashDictionary[i])
+                {
+                    result = pathDictionary[i];
+                    return true;
+                }
+            }
+
+            result = (hash - 0x1568000000000000).ToString("x");
+            return false;
+        } //TryGetStringName
     } //class
 } //namespace

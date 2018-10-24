@@ -5,23 +5,19 @@ using System;
 using System.Collections.Generic;
 using FmdlStudio.Scripts.MonoBehaviours;
 using FmdlStudio.Scripts.Static;
+using UnityEditor;
 
 namespace FmdlStudio.Scripts.Classes
 {
     [ScriptedImporter(1, "fmdl")]
     public class FmdlImporter : ScriptedImporter
     {
+        private static readonly Texture2D _defaultTex = GenerateDefaultTexture();
+        private static Texture2D DefaultTex => Instantiate(_defaultTex);
+
         public override void OnImportAsset(AssetImportContext ctx)
         {
-            try
-            {
-                ReadWithAssetImportContext(ctx, ctx.assetPath);
-            } //try
-            catch (Exception e)
-            {
-                Debug.Log($"{e.Message}");
-                Debug.Log($"An exception occured{e.StackTrace}");
-            } //catch
+            ReadWithAssetImportContext(ctx, ctx.assetPath);
         } //OnImportAsset
 
         public void ReadWithoutAssetImportContext(string filePath)
@@ -51,7 +47,7 @@ namespace FmdlStudio.Scripts.Classes
             Read(fmdl, mainObject, foxModel, bones, textures, materials, meshes, rootBone);
         } //ReadWithoutAssetImportContext
 
-        private Texture2D LoadTextureDXT(string path)
+        private static Texture2D LoadTextureDXT(string path)
         {
             byte[] ddsBytes = File.ReadAllBytes(path);
             TextureFormat textureFormat;
@@ -81,7 +77,7 @@ namespace FmdlStudio.Scripts.Classes
             return (texture);
         } //LoadTextureDXT
 
-        private void ReadWithAssetImportContext(AssetImportContext ctx, string filePath)
+        private static void ReadWithAssetImportContext(AssetImportContext ctx, string filePath)
         {
             Fmdl fmdl = new Fmdl(Path.GetFileNameWithoutExtension(filePath));
             fmdl.Read(filePath);
@@ -120,7 +116,7 @@ namespace FmdlStudio.Scripts.Classes
                 ctx.AddObjectToAsset($"Mesh {i}", meshes[i]);
         } //ReadWithAssetImportContext
 
-        private void Read(Fmdl fmdl, GameObject mainObject, FoxModel foxModel, Transform[] bones, Texture[] textures, Material[] materials, Mesh[] meshes, Transform rootBone)
+        private static void Read(Fmdl fmdl, GameObject mainObject, FoxModel foxModel, Transform[] bones, Texture[] textures, Material[] materials, Mesh[] meshes, Transform rootBone)
         {
             bool isGZFormat = fmdl.version == 2.03f;
             int boneCount = fmdl.fmdlBones != null ? fmdl.fmdlBones.Length : 0;
@@ -180,6 +176,7 @@ namespace FmdlStudio.Scripts.Classes
             for (int i = 0; i < textureCount; i++)
             {
                 string name;
+                bool isUnhashed = true;
 
                 Fmdl.FmdlTexture fmdlTexture = fmdl.fmdlTextures[i];
 
@@ -190,32 +187,13 @@ namespace FmdlStudio.Scripts.Classes
                     name = name.Substring(0, name.IndexOf(".")) + ".dds";
                 } //if
                 else
-                    name = Hashing.TryGetPathName(fmdl.fmdlPathCode64s[fmdlTexture.pathIndex]) + ".dds";
-
-                //Read the file.
-                if (File.Exists($"{Globals.texturePath}\\{name}"))
-                    textures[i] = LoadTextureDXT($"{Globals.texturePath}\\{name}");
-                else
                 {
-                    Debug.Log($"Could not find {Globals.texturePath}\\{name}");
+                    string result;
+                    isUnhashed = Hashing.TryGetPathName(fmdl.fmdlPathCode64s[fmdlTexture.pathIndex], out result);
+                    name = result + ".dds";
+                }
 
-                    Texture2D texture = new Texture2D(512, 512);
-
-                    for (int j = 0; j < 512; j++)
-                        for (int h = 0; h < 512; h++)
-                        {
-                            Color c = new Color(0.25f, 0.25f, 0.25f);
-
-                            if (((j / 32) % 2 == 0 && (h / 32) % 2 != 0) || ((j / 32) % 2 != 0 && (h / 32) % 2 == 0))
-                                c = new Color(0.5f, 0.5f, 0.5f);
-
-                            texture.SetPixel(j, h, c);
-                        } //for
-
-                    texture.Apply();
-
-                    textures[i] = texture;
-                } //else
+                textures[i] = GetTexture(name, isUnhashed);
 
                 //ctx.AddObjectToAsset($"Texture {i}", textures[i]);
                 textures[i].name = name;
@@ -451,5 +429,67 @@ namespace FmdlStudio.Scripts.Classes
                 gameObject.name = $"{i} - {name}";
             } //for
         } //Read
+
+        private static Texture2D GenerateDefaultTexture()
+        {
+            Texture2D texture = new Texture2D(512, 512);
+
+            for (int j = 0; j < 512; j++)
+                for (int h = 0; h < 512; h++)
+                {
+                    Color c = new Color(0.25f, 0.25f, 0.25f);
+
+                    if (((j / 32) % 2 == 0 && (h / 32) % 2 != 0) || ((j / 32) % 2 != 0 && (h / 32) % 2 == 0))
+                        c = new Color(0.5f, 0.5f, 0.5f);
+
+                    texture.SetPixel(j, h, c);
+                } //for
+
+            texture.Apply();
+
+            return texture;
+        }
+
+        private static Texture2D GetTexture(string path, bool isHash)
+        {
+#if FOXKIT
+            Texture2D texture;
+
+            if (!TryLoadTextureFromAsset(path, isHash, out texture))
+            {
+                texture = LoadTextureFromFolder(path);
+            }
+
+            return texture;
+#else
+            return LoadTextureFromFolder(path);
+#endif
+        }
+
+        private static Texture2D LoadTextureFromFolder(string path)
+        {
+            if (File.Exists($"{Globals.texturePath}\\{path}"))
+                return LoadTextureDXT($"{Globals.texturePath}\\{path}");
+            else
+            {
+                Debug.Log($"Could not find {Globals.texturePath}\\{path}");
+
+                return DefaultTex;
+            } //else
+        }
+
+        private static bool TryLoadTextureFromAsset(string path, bool isHash, out Texture2D texture)
+        {
+            texture = AssetDatabase.LoadAssetAtPath<Texture2D>(isHash ? "Assets\\" + path : path);
+
+            if (texture == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
     } //class
 } //namespace
