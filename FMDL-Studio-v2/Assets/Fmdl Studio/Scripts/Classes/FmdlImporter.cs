@@ -169,7 +169,9 @@ namespace FmdlStudio.Scripts.Classes
 
                 //Set up the bounding box.
                 Bounds bounds = new Bounds();
-                bounds.SetMinMax(new Vector3(-fmdlBoundingBox.min.x, fmdlBoundingBox.min.y, fmdlBoundingBox.min.z), new Vector3(-fmdlBoundingBox.max.x, fmdlBoundingBox.max.y, fmdlBoundingBox.max.z));
+
+                //The x min and max are swapped here on purpose! The max value will end up as the smallest value and the min value will end up as the largest value if they aren't swapped here!
+                bounds.SetMinMax(new Vector3(-fmdlBoundingBox.max.x, fmdlBoundingBox.min.y, fmdlBoundingBox.min.z), new Vector3(-fmdlBoundingBox.min.x, fmdlBoundingBox.max.y, fmdlBoundingBox.max.z));
                 BoxCollider boxCollider = bones[i].gameObject.AddComponent<BoxCollider>();
                 boxCollider.center = bones[i].InverseTransformPoint(bounds.center);
                 boxCollider.size = bounds.size;
@@ -347,13 +349,13 @@ namespace FmdlStudio.Scripts.Classes
                         boneWeights[j].boneIndex3 = fmdlBoneGroup.boneIndices[(int)fmdlMesh.boneIndices[j].w];
                     } //if
                     if (uv.Length > 0)
-                        uv[j] = new Vector2(fmdlMesh.uv[j].x, -fmdlMesh.uv[j].y);
+                        uv[j] = new Vector2(fmdlMesh.uv[j].x, 1 - fmdlMesh.uv[j].y);
                     if (uv2.Length > 0)
-                        uv2[j] = new Vector2(fmdlMesh.uv2[j].x, -fmdlMesh.uv2[j].y);
+                        uv2[j] = new Vector2(fmdlMesh.uv2[j].x, 1 - fmdlMesh.uv2[j].y);
                     if (uv3.Length > 0)
-                        uv3[j] = new Vector2(fmdlMesh.uv3[j].x, -fmdlMesh.uv3[j].y);
+                        uv3[j] = new Vector2(fmdlMesh.uv3[j].x, 1 - fmdlMesh.uv3[j].y);
                     if (uv4.Length > 0)
-                        uv4[j] = new Vector2(fmdlMesh.uv4[j].x, -fmdlMesh.uv4[j].y);
+                        uv4[j] = new Vector2(fmdlMesh.uv4[j].x, 1 - fmdlMesh.uv4[j].y);
                 } //for
 
                 for (int j = 0; j < faceLength; j++)

@@ -1108,7 +1108,7 @@ namespace FmdlStudio.Scripts.Classes
                                 fmdlMesh.unknownWeights[j] = new Vector4(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
                                 break;
                             case 0xD:
-                                fmdlMesh.unknownIndices[j] = new Vector4(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+                                fmdlMesh.unknownIndices[j] = new Vector4(reader.ReadUInt16(), reader.ReadUInt16(), reader.ReadUInt16(), reader.ReadUInt16());
                                 break;
                             case 0xE:
                                 for (int k = 0; k < 4; k++)
@@ -1116,6 +1116,8 @@ namespace FmdlStudio.Scripts.Classes
                                 break;
                         } //switch
                     } //for
+
+                    reader.BaseStream.Position = position + fmdlMeshFormats[fmdlMeshFormatInfos[i].firstMeshFormatIndex + 1].length;
                 } //for
 
                 reader.BaseStream.Position = section1Offset + section1Infos[bufferIndex].offset + fmdlBufferOffsets[2].offset + fmdlMeshInfos[i].firstFaceVertexIndex * 2;
@@ -1165,7 +1167,7 @@ namespace FmdlStudio.Scripts.Classes
 
         private void GetFmdlData(GameObject gameObject)
         {
-            FoxModel foxModel = gameObject.GetComponent<FoxModel>();
+            FoxModel foxModel = gameObject.GetComponent<FoxModel>();// ? gameObject.GetComponent<FoxModel>() : null;
             Transform rootBone = gameObject.transform;
             List<Transform> bones = new List<Transform>(0);
             List<BoxCollider> boundingBoxes = new List<BoxCollider>(0);
@@ -1176,16 +1178,32 @@ namespace FmdlStudio.Scripts.Classes
             List<Vector4> materialParameterVectors = new List<Vector4>(0);
             List<string> strings = new List<string>(0);
 
+            if(foxModel == null)
+            {
+                EditorUtility.DisplayDialog("FoxModel not found!", "The model does not contain a FoxModel component!", "Ok");
+                throw new Exception("FoxModel not found!");
+            } //if
+
             foreach (Transform t in gameObject.transform)
                 if (t.gameObject.name == "[Root]")
                 {
                     rootBone = t;
+
+                    if(!t.gameObject.GetComponent<BoxCollider>())
+                    {
+                        EditorUtility.DisplayDialog("Bounding boxes not found!", "Bounding boxes are missing! Make sure they've been generated!", "Ok");
+                        throw new Exception("Bounding boxes not found!");
+                    } //if
+
                     boundingBoxes.Add(t.gameObject.GetComponent<BoxCollider>());
                     break;
                 } //if
 
             if (rootBone == gameObject.transform)
+            {
+                EditorUtility.DisplayDialog("[Root] not found!", "The [Root] object was not found in the model!", "Ok");
                 throw new Exception("[Root] not found!");
+            } //if
 
             GetBonesAndBoundingBoxes(rootBone, bones, boundingBoxes);
             GetMeshesMaterialsTexturesAndVectors(gameObject, meshes, materials, textures, materialParameterVectors);
@@ -1247,6 +1265,13 @@ namespace FmdlStudio.Scripts.Classes
 
                 fmdlMeshGroup.nameIndex = (ushort)strings.Count;
                 strings.Add(foxMeshGroup.name);
+
+                if(i == 0 && foxMeshGroup.name != "MESH_ROOT")
+                {
+                    EditorUtility.DisplayDialog("MESH_ROOT missing!", "MESH_ROOT is missing from the mesh groups or is not the first mesh group!", "Ok");
+                    throw new Exception("MESH_ROOT missing!");
+                } //if
+
                 fmdlMeshGroup.invisibilityFlag = foxMeshGroup.visible ? (ushort)0 : (ushort)1;
                 fmdlMeshGroup.parentIndex = foxMeshGroup.parent;
                 fmdlMeshGroup.unknown0 = -1;
@@ -1410,6 +1435,12 @@ namespace FmdlStudio.Scripts.Classes
                 {
                     FmdlBoneGroup fmdlBoneGroup = new FmdlBoneGroup();
                     int meshBoneCount = meshes[i].bones.Length;
+
+                    if (meshBoneCount > 32)
+                    {
+                        EditorUtility.DisplayDialog("Bone Group has more than 32 bones!", "A mesh cannot be weighted to more than 32 bones!", "Ok");
+                        throw new Exception("A mesh cannot be weighted to more than 32 bones!");
+                    } //if
 
                     fmdlBoneGroup.unknown0 = 4;
                     fmdlBoneGroup.boneIndexCount = (ushort)meshBoneCount;
@@ -1727,7 +1758,7 @@ namespace FmdlStudio.Scripts.Classes
                     vertexOffset += 4;
 
                     fmdlMeshFormat4.vertexFormatCount++;
-                    fmdlMeshFormat4.length += 4;
+                    meshFormatLength += 4;
                 } //if
 
                 //Can't implement this. Unity doesn't support it.
@@ -1762,7 +1793,7 @@ namespace FmdlStudio.Scripts.Classes
                 fmdlMeshFormat4.length = meshFormatLength;
 
                 meshFormats.Add(fmdlMeshFormat2);
-                if (fmdlMeshFormat3.length > 0)
+                if (fmdlMeshFormat3.vertexFormatCount > 0)
                 {
                     meshFormats.Add(fmdlMeshFormat3);
                     fmdlMeshFormatInfo.meshFormatCount++;
@@ -1813,9 +1844,10 @@ namespace FmdlStudio.Scripts.Classes
             {
                 FmdlBoundingBox fmdlBoundingBox = new FmdlBoundingBox();
                 BoxCollider boundingBox = boundingBoxes[i];
-
-                fmdlBoundingBox.max = new Vector4(-boundingBox.bounds.max.x, boundingBox.bounds.max.y, boundingBox.bounds.max.z, 1f);
-                fmdlBoundingBox.min = new Vector4(-boundingBox.bounds.min.x, boundingBox.bounds.min.y, boundingBox.bounds.min.z, 1f);
+                
+                //The x min and max are swapped here on purpose! The max value will end up as the smallest value and the min value will end up as the largest value if they aren't swapped here!
+                fmdlBoundingBox.max = new Vector4(-boundingBox.bounds.min.x, boundingBox.bounds.max.y, boundingBox.bounds.max.z, 1f);
+                fmdlBoundingBox.min = new Vector4(-boundingBox.bounds.max.x, boundingBox.bounds.min.y, boundingBox.bounds.min.z, 1f);
 
                 fmdlBoundingBoxes[i] = fmdlBoundingBox;
             } //for
@@ -1929,18 +1961,18 @@ namespace FmdlStudio.Scripts.Classes
                         fmdlMesh.boneWeights[j] = new Vector4((byte)Math.Round(mesh.boneWeights[j].weight0 * 255), (byte)Math.Round(mesh.boneWeights[j].weight1 * 255), (byte)Math.Round(mesh.boneWeights[j].weight2 * 255), (byte)Math.Round(mesh.boneWeights[j].weight3 * 255));
                         fmdlMesh.boneIndices[j] = new Vector4(mesh.boneWeights[j].boneIndex0, mesh.boneWeights[j].boneIndex1, mesh.boneWeights[j].boneIndex2, mesh.boneWeights[j].boneIndex3);
                     } //if
-                    fmdlMesh.uv[j] = new Vector2Half(new Half(mesh.uv[j].x), new Half(-mesh.uv[j].y));
+                    fmdlMesh.uv[j] = new Vector2Half(new Half(mesh.uv[j].x), new Half(1 - mesh.uv[j].y));
                     if (mesh.uv2.Length > 0)
                     {
-                        fmdlMesh.uv2[j] = new Vector2Half(new Half(mesh.uv2[j].x), new Half(-mesh.uv2[j].y));
+                        fmdlMesh.uv2[j] = new Vector2Half(new Half(mesh.uv2[j].x), new Half(1 - mesh.uv2[j].y));
 
                         if (mesh.uv3.Length > 0)
                         {
-                            fmdlMesh.uv3[j] = new Vector2Half(new Half(mesh.uv3[j].x), new Half(-mesh.uv3[j].y));
+                            fmdlMesh.uv3[j] = new Vector2Half(new Half(mesh.uv3[j].x), new Half(1 - mesh.uv3[j].y));
 
                             if (mesh.uv4.Length > 0)
                             {
-                                fmdlMesh.uv4[j] = new Vector2Half(new Half(mesh.uv4[j].x), new Half(-mesh.uv4[j].y));
+                                fmdlMesh.uv4[j] = new Vector2Half(new Half(mesh.uv4[j].x), new Half(1 - mesh.uv4[j].y));
                             } //if
                         } //if
                     } //if
@@ -2308,6 +2340,8 @@ namespace FmdlStudio.Scripts.Classes
 
         private void GetMeshesMaterialsTexturesAndVectors(GameObject gameObject, List<SkinnedMeshRenderer> meshes, List<Material> materials, List<Texture> textures, List<Vector4> vectors)
         {
+            string errors = "";
+
             foreach (Transform t in gameObject.transform)
             {
                 if (t.gameObject.GetComponent<SkinnedMeshRenderer>())
@@ -2322,6 +2356,9 @@ namespace FmdlStudio.Scripts.Classes
                         materials.Add(material);
                         Shader shader = material.shader;
                         int propertyCount = ShaderUtil.GetPropertyCount(shader);
+
+                        if (!shader.name.Contains("FoxShaders"))
+                            errors += $"{skinnedMeshRenderer.name}\n";
 
                         for (int i = 0; i < propertyCount; i++)
                             if (ShaderUtil.GetPropertyType(shader, i) == ShaderUtil.ShaderPropertyType.TexEnv)
@@ -2341,6 +2378,12 @@ namespace FmdlStudio.Scripts.Classes
                     } //if
                 } //if
             } //foreach
+
+            if(!string.IsNullOrWhiteSpace(errors))
+            {
+                EditorUtility.DisplayDialog("Invalid Shader!", $"The following meshes are not using Fox shaders:\n{errors}", "Ok");
+                throw new Exception("Invalid Shader!");
+            } //if
         } //GetMeshesMaterialsAndTextures
 
         private void WriteFmdlData(string filePath)
