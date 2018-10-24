@@ -1162,7 +1162,7 @@ namespace FmdlStudio.Scripts.Classes
                 //Debug.Log($"{e.Message}");
                 //Debug.Log($"An exception occured{e.StackTrace}");
                 EditorUtility.ClearProgressBar();
-            }//finally ////catch
+            } //finally ////catch
         } //Write
 
         private void GetFmdlData(GameObject gameObject)
