@@ -188,14 +188,26 @@ namespace FmdlStudio.Scripts.Classes
                 } //if
                 else
                 {
-                    string result;
-                    isUnhashed = Hashing.TryGetPathName(fmdl.fmdlPathCode64s[fmdlTexture.pathIndex], out result);
-                    name = result + ".dds";
-                }
+                    Debug.LogWarning($"Could not find {Globals.texturePath}\\{name}");
 
-                textures[i] = GetTexture(name, isUnhashed);
+                    Texture2D texture = new Texture2D(512, 512);
 
-                //ctx.AddObjectToAsset($"Texture {i}", textures[i]);
+                    for (int j = 0; j < 512; j++)
+                        for (int h = 0; h < 512; h++)
+                        {
+                            Color c = new Color(0.25f, 0.25f, 0.25f);
+
+                            if (((j / 32) % 2 == 0 && (h / 32) % 2 != 0) || ((j / 32) % 2 != 0 && (h / 32) % 2 == 0))
+                                c = new Color(0.5f, 0.5f, 0.5f);
+
+                            texture.SetPixel(j, h, c);
+                        } //for
+
+                    texture.Apply();
+
+                    textures[i] = texture;
+                } //else
+                
                 textures[i].name = name;
             } //for
 
@@ -218,8 +230,17 @@ namespace FmdlStudio.Scripts.Classes
                     materialName = Hashing.TryGetStringName(fmdl.fmdlStrCode64s[fmdlMaterialInstance.nameIndex]);
                 } //else
 
-                materials[i] = new Material(Shader.Find($"FoxShaders/{shaderName}"));
-                //ctx.AddObjectToAsset($"Material {i}", materials[i]);
+                //Some ombs models have broken, unused, materials in them. Try catch here is necessary to handle them.
+                try
+                {
+                    materials[i] = new Material(Shader.Find($"FoxShaders/{shaderName}"));
+                } //try
+                catch
+                {
+                    materials[i] = new Material(Shader.Find($"FoxShaders/fox3DDF_Blin_LNM"));
+                    Debug.LogWarning($"Material {materialName} trying to use missing shader: {shaderName}! Defaulting to fox3DDF_Blin_LNM!");
+                } //catch
+                
                 materials[i].name = materialName;
 
                 //Link textures.
@@ -234,8 +255,8 @@ namespace FmdlStudio.Scripts.Classes
                     else
                         textureType = Hashing.TryGetStringName(fmdl.fmdlStrCode64s[fmdlMaterialParameter.nameIndex]);
 
-                    materials[i].SetTexture(textureType, textures[fmdlMaterialParameter.referenceIndex]);
-                    materials[i].SetTextureScale(textureType, new Vector2(1, -1)); //Have to flip textures here because Texture2D.LoadRawData is bugged an imports DDS files upside down.
+                    materials[i].SetTexture($"_{textureType}", textures[fmdlMaterialParameter.referenceIndex]);
+                    materials[i].SetTextureScale($"_{textureType}", new Vector2(1, -1)); //Have to flip textures here because Texture2D.LoadRawData is bugged an imports DDS files upside down.
                 } //for
 
                 //Set parameters.
@@ -250,7 +271,7 @@ namespace FmdlStudio.Scripts.Classes
                     else
                         parameterName = Hashing.TryGetStringName(fmdl.fmdlStrCode64s[fmdlMaterialParameter.nameIndex]);
 
-                    materials[i].SetVector(parameterName, fmdl.fmdlMaterialParameterVectors[fmdlMaterialParameter.referenceIndex]);
+                    materials[i].SetVector($"_{parameterName}", fmdl.fmdlMaterialParameterVectors[fmdlMaterialParameter.referenceIndex]);
                 } //for
             } //for
 
@@ -278,7 +299,6 @@ namespace FmdlStudio.Scripts.Classes
             for (int i = 0; i < meshCount; i++)
             {
                 meshes[i] = new Mesh();
-                //ctx.AddObjectToAsset($"Mesh {i}", meshes[i]);
                 GameObject gameObject = new GameObject();
                 gameObject.transform.parent = mainObject.transform;
                 SkinnedMeshRenderer skinnedMeshRenderer = gameObject.AddComponent<SkinnedMeshRenderer>();
@@ -415,6 +435,7 @@ namespace FmdlStudio.Scripts.Classes
                 skinnedMeshRenderer.bones = usedBonesArray;
                 skinnedMeshRenderer.sharedMaterial = materials[fmdlMeshInfo.materialInstanceIndex];
                 skinnedMeshRenderer.sharedMesh = meshes[i];
+                skinnedMeshRenderer.rootBone = mainObject.transform;
 
                 foxModel.meshDefinitions[i].mesh = meshes[i];
                 foxModel.meshDefinitions[i].meshGroup = Array.Find(fmdl.fmdlMeshGroupEntries, x => x.firstMeshIndex <= i && x.firstMeshIndex + x.meshCount > i).meshGroupIndex;
