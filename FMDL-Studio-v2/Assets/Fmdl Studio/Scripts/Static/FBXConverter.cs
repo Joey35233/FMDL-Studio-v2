@@ -64,8 +64,6 @@ namespace FmdlStudio.Scripts.Static
             int deformerCount = deformers.Count;
             int videoCount = videos.Count;
             int textureCount = textures.Count;
-
-            const string BAR_STRING = "Converting to FBX!";
             
 
             //Object Properties
