@@ -324,166 +324,134 @@ namespace FmdlStudio.Scripts.Classes
                 {
                     BinaryReader reader = new BinaryReader(stream);
 
-                    EditorUtility.DisplayProgressBar("Reading!", "Header", 0f / 26f);
                     ReadHeader(reader);
 
-                    EditorUtility.DisplayProgressBar("Reading!", "Section Info", 1f / 26f);
                     ReadSectionInfo(reader);
 
                     if (bonesIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Bones", 2f / 26f);
                         ReadBones(reader);
                     } //if
 
                     if (meshGroupsIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Mesh Groups", 3f / 26f);
                         ReadMeshGroups(reader);
                     } //if
 
                     if (meshGroupEntriesIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Mesh Group Entries", 4f / 26f);
                         ReadMeshGroupEntries(reader);
                     } //if
 
                     if (meshInfoIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Mesh Info", 5f / 26f);
                         ReadMeshInfo(reader);
                     } //if
 
                     if (materialInstancesIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Material Instances", 6f / 26f);
                         ReadMaterialInstances(reader);
                     } //if
 
                     if (boneGroupsIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Bone Groups", 7f / 26f);
                         ReadBoneGroups(reader);
                     } //if
 
                     if (texturesIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Textures", 8f / 26f);
                         ReadTextures(reader);
                     } //if
 
                     if (materialParametersIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Material Parameters", 9f / 26f);
                         ReadMaterialParameters(reader);
                     } //if
 
                     if (materialsIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Materials", 10f / 26f);
                         ReadMaterials(reader);
                     } //if
 
                     if (meshFormatInfoIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Mesh Format Info", 11f / 26f);
                         ReadMeshFormatInfo(reader);
                     } //if
 
                     if (meshFormatsIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Mesh Formats", 12f / 26f);
                         ReadMeshFormats(reader);
                     } //if
 
                     if (vertexFormatsIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Vertex Formats", 13f / 26f);
                         ReadVertexFormats(reader);
                     } //if
 
                     if (stringInfoIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "String Info", 14f / 26f);
                         ReadStringInfo(reader);
                     } //if
 
                     if (boundingBoxesIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Bounding Boxes", 15f / 26f);
                         ReadBoundingBoxes(reader);
                     } //if
 
                     if (bufferOffsetsIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Buffer Offsets", 16f / 26f);
                         ReadBufferOffsets(reader);
                     } //if
 
                     if (lodInfoIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "LOD Info", 17f / 26f);
                         ReadLodInfo(reader);
                     } //if
 
                     if (faceInfoIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Face Info", 18f / 26f);
                         ReadFaceInfo(reader);
                     } //if
 
                     if (type12Index != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Type 12s", 19f / 26f);
                         ReadType12(reader);
                     } //if
 
                     if (type14Index != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Type 14s", 20f / 26f);
                         ReadType14(reader);
                     } //if
 
                     if (pathCode64sIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "PathCode64s", 21f / 26f);
                         ReadPathCode64s(reader);
                     } //if
 
                     if (strCode64sIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "StrCode64s", 22f / 26f);
                         ReadStrCode64s(reader);
                     } //if
 
                     if (materialParameterVectorsIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Material Parameter Vectors", 23f / 26f);
                         ReadMaterialParameterFloats(reader);
                     } //if
 
                     if (bufferIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Buffer", 24f / 26f);
                         ReadBuffer(reader);
                     } //if
 
                     if (stringsIndex != -1)
                     {
-                        EditorUtility.DisplayProgressBar("Reading!", "Strings", 25f / 26f);
                         ReadStrings(reader);
                     } //if
-
-                    stream.Close();
-                    EditorUtility.ClearProgressBar();
-                } //try
-                finally //catch (Exception e)
+                }
+                finally
                 {
                     stream.Close();
-                    //Debug.Log($"{e.Message} The stream was at offset 0x{stream.Position.ToString("x")} when this exception occured.");
-                    //Debug.Log($"An exception occured{e.StackTrace}");
-                    EditorUtility.ClearProgressBar();
-                } //finally ////catch
+                } //finally
             } //using
         } //Read
 
@@ -1152,17 +1120,8 @@ namespace FmdlStudio.Scripts.Classes
 
         public void Write(GameObject gameObject, string filePath)
         {
-            try
-            {
-                GetFmdlData(gameObject);
-                WriteFmdlData(filePath);
-            } //try
-            finally //catch (Exception e)
-            {
-                //Debug.Log($"{e.Message}");
-                //Debug.Log($"An exception occured{e.StackTrace}");
-                EditorUtility.ClearProgressBar();
-            } //finally ////catch
+            GetFmdlData(gameObject);
+            WriteFmdlData(filePath);
         } //Write
 
         private void GetFmdlData(GameObject gameObject)
@@ -1180,7 +1139,7 @@ namespace FmdlStudio.Scripts.Classes
 
             if(foxModel == null)
             {
-                EditorUtility.DisplayDialog("FoxModel not found!", "The model does not contain a FoxModel component!", "Ok");
+                
                 throw new Exception("FoxModel not found!");
             } //if
 
@@ -1191,7 +1150,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if(!t.gameObject.GetComponent<BoxCollider>())
                     {
-                        EditorUtility.DisplayDialog("Bounding boxes not found!", "Bounding boxes are missing! Make sure they've been generated!", "Ok");
+                        
                         throw new Exception("Bounding boxes not found!");
                     } //if
 
@@ -1201,7 +1160,7 @@ namespace FmdlStudio.Scripts.Classes
 
             if (rootBone == gameObject.transform)
             {
-                EditorUtility.DisplayDialog("[Root] not found!", "The [Root] object was not found in the model!", "Ok");
+                
                 throw new Exception("[Root] not found!");
             } //if
 
@@ -1212,7 +1171,7 @@ namespace FmdlStudio.Scripts.Classes
 
             strings.Add("");
 
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Header", 0f / 22f);
+            
             signature = 0x4C444D46;
             version = 2.03f;
             sectionInfoOffset = 0;
@@ -1226,7 +1185,7 @@ namespace FmdlStudio.Scripts.Classes
             section1Length = 0;
 
             //Bones
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Bones", 1f / 22f);
+            
             int boneCount = bones.Count;
 
             fmdlBones = new FmdlBone[boneCount];
@@ -1253,7 +1212,7 @@ namespace FmdlStudio.Scripts.Classes
             } //for
 
             //Mesh Groups
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Mesh Groups", 2f / 22f);
+            
             int meshGroupCount = foxModel.meshGroups.Length;
 
             fmdlMeshGroups = new FmdlMeshGroup[meshGroupCount];
@@ -1268,7 +1227,7 @@ namespace FmdlStudio.Scripts.Classes
 
                 if(i == 0 && foxMeshGroup.name != "MESH_ROOT")
                 {
-                    EditorUtility.DisplayDialog("MESH_ROOT missing!", "MESH_ROOT is missing from the mesh groups or is not the first mesh group!", "Ok");
+                    
                     throw new Exception("MESH_ROOT missing!");
                 } //if
 
@@ -1280,7 +1239,7 @@ namespace FmdlStudio.Scripts.Classes
             } //for
 
             //Mesh Group Entries
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Mesh Group Entries", 3f / 22f);
+            
             int meshCount = meshes.Count;
             List<FmdlMeshGroupEntry> meshGroupEntries = new List<FmdlMeshGroupEntry>(0);
             FmdlMeshGroupEntry fmdlMeshGroupEntry = new FmdlMeshGroupEntry();
@@ -1318,7 +1277,7 @@ namespace FmdlStudio.Scripts.Classes
             fmdlMeshGroupEntries = meshGroupEntries.ToArray();
 
             //Mesh Info
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Mesh Info", 4f / 22f);
+            
             fmdlMeshInfos = new FmdlMeshInfo[meshCount];
 
             for (int i = 0; i < meshCount; i++)
@@ -1343,7 +1302,7 @@ namespace FmdlStudio.Scripts.Classes
             } //for
 
             //Materials
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Materials", 5f / 22f);
+            
             int materialInstanceCount = materials.Count;
 
             for (int i = 0; i < materialInstanceCount; i++)
@@ -1374,7 +1333,7 @@ namespace FmdlStudio.Scripts.Classes
             } //for
 
             //Material Instances
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Material Instances", 6f / 22f);
+            
             fmdlMaterialInstances = new FmdlMaterialInstance[materialInstanceCount];
 
             for (int i = 0; i < materialInstanceCount; i++)
@@ -1426,7 +1385,7 @@ namespace FmdlStudio.Scripts.Classes
             } //for
 
             //Bone Groups
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Bone Groups", 7f / 22f);
+            
             if (boneCount > 0)
             {
                 fmdlBoneGroups = new FmdlBoneGroup[meshCount];
@@ -1438,7 +1397,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (meshBoneCount > 32)
                     {
-                        EditorUtility.DisplayDialog("Bone Group has more than 32 bones!", "A mesh cannot be weighted to more than 32 bones!", "Ok");
+                        
                         throw new Exception("A mesh cannot be weighted to more than 32 bones!");
                     } //if
 
@@ -1456,7 +1415,7 @@ namespace FmdlStudio.Scripts.Classes
                 fmdlBoneGroups = new FmdlBoneGroup[0];
 
             //Textures
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Textures", 8f / 22f);
+            
             int textureCount = textures.Count;
 
             fmdlTextures = new FmdlTexture[textureCount];
@@ -1488,7 +1447,7 @@ namespace FmdlStudio.Scripts.Classes
             } //for
 
             //Material Parameters
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Material Parameters", 9f / 22f);
+            
             List<FmdlMaterialParameter> materialParameters = new List<FmdlMaterialParameter>(0);
 
             for (int i = 0; i < materialInstanceCount; i++)
@@ -1548,7 +1507,7 @@ namespace FmdlStudio.Scripts.Classes
             fmdlMaterialParameters = materialParameters.ToArray();
 
             //Mesh Format Info
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Mesh Format Info", 10f / 22f);
+            
             List<FmdlVertexFormat> vertexFormats = new List<FmdlVertexFormat>(0);
             List<FmdlMeshFormat> meshFormats = new List<FmdlMeshFormat>(0);
             uint positionOffset = 0;
@@ -1814,7 +1773,7 @@ namespace FmdlStudio.Scripts.Classes
             fmdlVertexFormats = vertexFormats.ToArray();
 
             //String Info
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "String Info", 11f / 22f);
+            
             int stringCount = strings.Count;
 
             fmdlStringInfos = new FmdlStringInfo[stringCount];
@@ -1835,7 +1794,7 @@ namespace FmdlStudio.Scripts.Classes
             } //for
 
             //Bounding Boxes
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Bounding Boxes", 12f / 22f);
+            
             int boundingBoxCount = boundingBoxes.Count;
 
             fmdlBoundingBoxes = new FmdlBoundingBox[boundingBoxCount];
@@ -1853,7 +1812,7 @@ namespace FmdlStudio.Scripts.Classes
             } //for
 
             //Buffer Offsets
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Buffer Offsets", 13f / 22f);
+            
             fmdlBufferOffsets = new FmdlBufferOffset[3];
 
             for (int i = 0; i < 3; i++)
@@ -1871,7 +1830,7 @@ namespace FmdlStudio.Scripts.Classes
             } //for
 
             //Lod Info
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "LOD Info", 14f / 22f);
+            
             fmdlLodInfos = new FmdlLodInfo[1];
 
             FmdlLodInfo fmdlLodInfo = new FmdlLodInfo();
@@ -1884,7 +1843,7 @@ namespace FmdlStudio.Scripts.Classes
             fmdlLodInfos[0] = fmdlLodInfo;
 
             //Face Info
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Face Info", 15f / 22f);
+            
             fmdlFaceInfos = new FmdlFaceInfo[meshCount];
 
             for (int i = 0; i < meshCount; i++)
@@ -1898,7 +1857,7 @@ namespace FmdlStudio.Scripts.Classes
             } //for
 
             //Type 12
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Type 12s", 16f / 22f);
+            
             fmdlType12s = new FmdlType12[1];
 
             FmdlType12 fmdlType12 = new FmdlType12();
@@ -1908,7 +1867,7 @@ namespace FmdlStudio.Scripts.Classes
             fmdlType12s[0] = fmdlType12;
 
             //Type 14
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Type 14s", 17f / 22f);
+            
             fmdlType14s = new FmdlType14[1];
 
             FmdlType14 fmdlType14 = new FmdlType14();
@@ -1923,11 +1882,11 @@ namespace FmdlStudio.Scripts.Classes
             fmdlType14s[0] = fmdlType14;
 
             //Material Parameter Vectors
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Material Parameter Vectors", 18f / 22f);
+            
             fmdlMaterialParameterVectors = materialParameterVectors.ToArray();
 
             //Meshes
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Buffer", 19f / 22f);
+            
             fmdlMeshes = new FmdlMesh[meshCount];
 
             for (int i = 0; i < meshCount; i++)
@@ -1985,11 +1944,11 @@ namespace FmdlStudio.Scripts.Classes
             } //for
 
             //Strings
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Strings", 20f / 22f);
+            
             fmdlStrings = strings.ToArray();
 
             //Section 0 Info
-            EditorUtility.DisplayProgressBar("Getting Model Data!", "Section Info", 21f / 22f);
+            
             List<Section0Info> section0Infos = new List<Section0Info>(0);
 
             if (boneCount > 0)
@@ -2381,7 +2340,7 @@ namespace FmdlStudio.Scripts.Classes
 
             if(!string.IsNullOrWhiteSpace(errors))
             {
-                EditorUtility.DisplayDialog("Invalid Shader!", $"The following meshes are not using Fox shaders:\n{errors}", "Ok");
+                
                 throw new Exception("Invalid Shader!");
             } //if
         } //GetMeshesMaterialsAndTextures
@@ -2410,7 +2369,7 @@ namespace FmdlStudio.Scripts.Classes
                     int boundingBoxCount = fmdlBoundingBoxes.Length;
                     int materialParameterVectorCount = fmdlMaterialParameterVectors.Length;
 
-                    EditorUtility.DisplayProgressBar("Writing!", "Header", 0f / 25f);
+                    
                     writer.Write(signature);
                     writer.Write(version);
                     writer.Write(sectionInfoOffset);
@@ -2426,7 +2385,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     sectionInfoOffset = (ulong)writer.BaseStream.Position;
 
-                    EditorUtility.DisplayProgressBar("Writing!", "Section Info", 1f / 25f);
+                    
                     for (int i = 0; i < section0InfoCount; i++)
                     {
                         writer.Write(section0Infos[i].type);
@@ -2448,7 +2407,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (boneCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Bones", 2f / 25f);
+                        
                         section0Infos[bonesIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                         for (int i = 0; i < boneCount; i++)
@@ -2470,7 +2429,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (meshGroupCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Mesh Groups", 3f / 25f);
+                        
                         section0Infos[meshGroupsIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                         for (int i = 0; i < meshGroupCount; i++)
@@ -2487,7 +2446,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (meshGroupEntryCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Mesh Group Entries", 4f / 25f);
+                        
                         section0Infos[meshGroupEntriesIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                         for (int i = 0; i < meshGroupEntryCount; i++)
@@ -2508,7 +2467,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (meshCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Mesh Info", 5f / 25f);
+                        
                         section0Infos[meshInfoIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                         for (int i = 0; i < meshCount; i++)
@@ -2533,7 +2492,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (materialInstanceCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Material Instances", 6f / 25f);
+                        
                         section0Infos[materialInstancesIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                         for (int i = 0; i < materialInstanceCount; i++)
@@ -2554,7 +2513,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (boneGroupCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Bone Groups", 7f / 25f);
+                        
                         section0Infos[boneGroupsIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                         for (int i = 0; i < boneGroupCount; i++)
@@ -2572,7 +2531,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (textureCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Textures", 8f / 25f);
+                        
                         section0Infos[texturesIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                         for (int i = 0; i < textureCount; i++)
@@ -2587,7 +2546,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (materialParameterCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Material Parameters", 9f / 25f);
+                        
                         section0Infos[materialParametersIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                         for (int i = 0; i < materialParameterCount; i++)
@@ -2602,7 +2561,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (materialCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Materials", 10f / 25f);
+                        
                         section0Infos[materialsIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                         for (int i = 0; i < materialCount; i++)
@@ -2617,7 +2576,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (meshCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Mesh Format Info", 11f / 25f);
+                        
                         section0Infos[meshFormatInfoIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                         for (int i = 0; i < meshCount; i++)
@@ -2636,7 +2595,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (meshFormatCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Mesh Formats", 12f / 25f);
+                        
                         section0Infos[meshFormatsIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                         for (int i = 0; i < meshFormatCount; i++)
@@ -2654,7 +2613,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (vertexFormatCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Vertex Formats", 13f / 25f);
+                        
                         section0Infos[vertexFormatsIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                         for (int i = 0; i < vertexFormatCount; i++)
@@ -2670,7 +2629,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (stringCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "String Info", 14f / 25f);
+                        
                         section0Infos[stringInfoIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                         for (int i = 0; i < stringCount; i++)
@@ -2686,7 +2645,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (boundingBoxCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Bounding Boxes", 15f / 25f);
+                        
                         section0Infos[boundingBoxesIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                         for (int i = 0; i < boundingBoxCount; i++)
@@ -2701,7 +2660,7 @@ namespace FmdlStudio.Scripts.Classes
                             writer.WriteZeroes((int)(0x10 - writer.BaseStream.Position % 0x10));
                     } //if
 
-                    EditorUtility.DisplayProgressBar("Writing!", "Buffer Offsets", 16f / 25f);
+                    
                     section0Infos[bufferOffsetsIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                     for (int i = 0; i < 3; i++)
@@ -2715,7 +2674,7 @@ namespace FmdlStudio.Scripts.Classes
                     if (writer.BaseStream.Position % 0x10 != 0)
                         writer.WriteZeroes((int)(0x10 - writer.BaseStream.Position % 0x10));
 
-                    EditorUtility.DisplayProgressBar("Writing!", "LOD Info", 17f / 25f);
+                    
                     section0Infos[lodInfoIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                     writer.Write(fmdlLodInfos[0].lodCount);
@@ -2728,7 +2687,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (meshCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Face Info", 18f / 25f);
+                        
                         section0Infos[faceInfoIndex].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                         for (int i = 0; i < meshCount; i++)
@@ -2741,12 +2700,12 @@ namespace FmdlStudio.Scripts.Classes
                             writer.WriteZeroes((int)(0x10 - writer.BaseStream.Position % 0x10));
                     } //if
 
-                    EditorUtility.DisplayProgressBar("Writing!", "Type 12s", 19f / 25f);
+                    
                     section0Infos[type12Index].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                     writer.Write(fmdlType12s[0].unknown0);
 
-                    EditorUtility.DisplayProgressBar("Writing!", "Type 14s", 20f / 25f);
+                    
                     section0Infos[type14Index].offset = (uint)writer.BaseStream.Position - section0Offset;
 
                     writer.WriteZeroes(4);
@@ -2768,7 +2727,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (materialParameterVectorCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Material Parameter Vectors", 21f / 25f);
+                        
                         section1Infos[materialParameterVectorsIndex].offset = (uint)writer.BaseStream.Position - section1Offset;
 
                         for (int i = 0; i < materialParameterVectorCount; i++)
@@ -2783,7 +2742,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (meshCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Buffer", 22f / 25f);
+                        
                         section1Infos[bufferIndex].offset = (uint)writer.BaseStream.Position - section1Offset;
 
                         for (int i = 0; i < meshCount; i++)
@@ -2893,7 +2852,7 @@ namespace FmdlStudio.Scripts.Classes
 
                     if (stringCount > 0)
                     {
-                        EditorUtility.DisplayProgressBar("Writing!", "Strings", 23f / 25f);
+                        
                         section1Infos[stringsIndex].offset = (uint)writer.BaseStream.Position - section1Offset;
 
                         for (int i = 0; i < stringCount; i++)
@@ -2914,7 +2873,7 @@ namespace FmdlStudio.Scripts.Classes
                         section1Length = (uint)writer.BaseStream.Position - section1Offset;
                     } //if
 
-                    EditorUtility.DisplayProgressBar("Writing!", "Offsets", 24f / 25f);
+                    
                     writer.BaseStream.Position = 0x8;
                     writer.Write(sectionInfoOffset);
                     writer.BaseStream.Position = 0x28;
@@ -2946,15 +2905,11 @@ namespace FmdlStudio.Scripts.Classes
                     } //for
 
                     stream.Close();
-                    EditorUtility.ClearProgressBar();
                 } //try
-                catch (Exception e)
+                finally
                 {
                     stream.Close();
-                    Debug.LogError($"{e.Message} The stream was at offset 0x{stream.Position.ToString("x")} when this exception occured.");
-                    Debug.LogError($"An exception occured{e.StackTrace}");
-                    EditorUtility.ClearProgressBar();
-                } //catch
+                } //finally
             } //using
         } //WriteFmdlData
     } //ExpFmdl

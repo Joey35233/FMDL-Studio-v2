@@ -66,7 +66,7 @@ namespace FmdlStudio.Scripts.Static
             int textureCount = textures.Count;
 
             const string BAR_STRING = "Converting to FBX!";
-            EditorUtility.DisplayProgressBar(BAR_STRING, "Starting!", 0);
+            
 
             //Object Properties
             fbx.Append("\n; Object properties");
@@ -76,7 +76,7 @@ namespace FmdlStudio.Scripts.Static
             //Bone Nodes
             for (int i = 0; i < boneCount; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Bone Nodes: {i}/{boneCount}", (float)i / boneCount);
+                
 
                 fbx.AppendFormat("\n\tNodeAttribute: {0}, \"NodeAttribute::\", \"LimbNode\" {{", nodesToBones[i].Item1);
                 fbx.Append("\n\t\tTypeFlags: \"Skeleton\"");
@@ -86,7 +86,7 @@ namespace FmdlStudio.Scripts.Static
             //Meshes
             for (int i = 0; i < meshCount; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Meshes: {i}/{meshCount}", (float)i / meshCount);
+                
 
                 Vector3[] vertices = meshes[i].Item2.sharedMesh.vertices;
                 int[] triangles = meshes[i].Item2.sharedMesh.triangles;
@@ -415,7 +415,7 @@ namespace FmdlStudio.Scripts.Static
             //General Objects Names/Positions
             for (int i = 0; i < objectCount; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Objects: {i}/{objectCount}", (float)i / objectCount);
+                
 
                 Tuple<int, GameObject> obj = objects[i];
 
@@ -434,7 +434,7 @@ namespace FmdlStudio.Scripts.Static
             //Bones Names/Positions
             for (int i = 0; i < boneCount; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Bones: {i}/{boneCount}", (float)i / boneCount);
+                
 
                 Tuple<int, Transform> bone = bones[i];
 
@@ -456,7 +456,7 @@ namespace FmdlStudio.Scripts.Static
             //Mesh Names
             for (int i = 0; i < meshCount; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Mesh Names: {i}/{meshCount}", (float)i / meshCount);
+                
 
                 Tuple<int, SkinnedMeshRenderer> mesh = meshes[i];
 
@@ -478,7 +478,7 @@ namespace FmdlStudio.Scripts.Static
             fbx.AppendFormat("\n\t\tNbPoseNodes: {0}", geometryCount);
             for (int i = 0; i < geometryCount; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Pose Nodes: {i}/{geometryCount}", (float)i / geometryCount);
+                
 
                 fbx.Append("\n\t\tPoseNode:  {");
                 fbx.AppendFormat("\n\t\t\tNode: {0}", geometry[i]);
@@ -489,7 +489,7 @@ namespace FmdlStudio.Scripts.Static
             //Materials
             for (int i = 0; i < materialCount; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Materials: {i}/{materialCount}", (float)i / materialCount);
+                
 
                 Tuple<int, Material> material = materials[i];
 
@@ -512,7 +512,7 @@ namespace FmdlStudio.Scripts.Static
             //Deformers
             for (int i = 0; i < deformerCount; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Deformers: {i}/{deformerCount}", (float)i / deformerCount);
+                
 
                 Tuple<int, SkinnedMeshRenderer> mesh = meshes[i];
                 List<Transform> meshBones = new List<Transform>(0);
@@ -603,7 +603,7 @@ namespace FmdlStudio.Scripts.Static
             //Texture Videos
             for (int i = 0; i < videoCount; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Texture Videos: {i}/{videoCount}", (float)i / videoCount);
+                
 
                 Texture texture = textures[i].Item2;
 
@@ -621,7 +621,7 @@ namespace FmdlStudio.Scripts.Static
             //Textures
             for (int i = 0; i < textureCount; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Textures: {i}/{textureCount}", (float)i / textureCount);
+                
 
                 Tuple<int, Texture> texture = textures[i];
 
@@ -655,7 +655,7 @@ namespace FmdlStudio.Scripts.Static
             //General Object Connections
             for (int i = 0; i < objectConnections.Count; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Object Connections: {i}/{objectConnections.Count}", (float)i / objectConnections.Count);
+                
 
                 string name1 = "";
                 string name2 = objects.Find(x => x.Item1 == objectConnections[i].Item2).Item2.name;
@@ -675,7 +675,7 @@ namespace FmdlStudio.Scripts.Static
             //Bone Node to Bone Connections
             for (int i = 0; i < nodesToBones.Count; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Node to Bone Connections: {i}/{nodesToBones.Count}", (float)i / nodesToBones.Count);
+                
 
                 string name1 = bones.Find(x => x.Item1 == nodesToBones[i].Item2).Item2.gameObject.name;
 
@@ -686,7 +686,7 @@ namespace FmdlStudio.Scripts.Static
             //Bone to Bone Connections
             for (int i = 0; i < boneConnections.Count; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Bone Connections: {i}/{boneConnections.Count}", (float)i / boneConnections.Count);
+                
 
                 string name1 = bones.Find(x => x.Item1 == boneConnections[i].Item1).Item2.gameObject.name;
                 string name2 = bones.Find(x => x.Item1 == boneConnections[i].Item2).Item2.gameObject.name;
@@ -698,7 +698,7 @@ namespace FmdlStudio.Scripts.Static
             //Material to Mesh Connections
             for (int i = 0; i < materialsToMeshes.Count; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Material to Mesh Connections: {i}/{materialsToMeshes.Count}", (float)i / materialsToMeshes.Count);
+                
 
                 string name1 = materials.Find(x => x.Item1 == materialsToMeshes[i].Item1).Item2.name;
                 string name2 = meshes.Find(x => x.Item1 == materialsToMeshes[i].Item2).Item2.name;
@@ -710,7 +710,7 @@ namespace FmdlStudio.Scripts.Static
             //Geometry to Mesh Connections
             for (int i = 0; i < geometryToMeshes.Count; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Geometry to Mesh Connections: {i}/{geometryToMeshes.Count}", (float)i / geometryToMeshes.Count);
+                
 
                 string name1 = meshes.Find(x => x.Item1 == geometryToMeshes[i].Item2).Item2.name;
 
@@ -721,7 +721,7 @@ namespace FmdlStudio.Scripts.Static
             //Deformer to Geometry Connections
             for (int i = 0; i < deformersToGeometry.Count; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Deformer to Geometry Connections: {i}/{deformersToGeometry.Count}", (float)i / deformersToGeometry.Count);
+                
 
                 fbx.Append("\n\n\t;Deformer::, Geometry::Scene");
                 fbx.AppendFormat("\n\tC: \"OO\",{0},{1}", deformersToGeometry[i].Item1, deformersToGeometry[i].Item2);
@@ -730,7 +730,7 @@ namespace FmdlStudio.Scripts.Static
             //SubDeformer to Deformer Connections
             for (int i = 0; i < subDeformersToDeformers.Count; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"SubDeformer to Deformer Connections: {i}/{subDeformersToDeformers.Count}", (float)i / subDeformersToDeformers.Count);
+                
 
                 fbx.Append("\n\n\t;SubDeformer::, Deformer::");
                 fbx.AppendFormat("\n\tC: \"OO\",{0},{1}", subDeformersToDeformers[i].Item1, subDeformersToDeformers[i].Item2);
@@ -739,7 +739,7 @@ namespace FmdlStudio.Scripts.Static
             //Bone to SubDeformer Connections
             for (int i = 0; i < bonesToSubDeformers.Count; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Bone to SubDeformer Connections: {i}/{bonesToSubDeformers.Count}", (float)i / bonesToSubDeformers.Count);
+                
 
                 string name1 = bones.Find(x => x.Item1 == bonesToSubDeformers[i].Item1).Item2.gameObject.name;
 
@@ -750,7 +750,7 @@ namespace FmdlStudio.Scripts.Static
             //Texture to Material Connections
             for (int i = 0; i < texturesToMaterials.Count; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Texture to Material Connections: {i}/{texturesToMaterials.Count}", (float)i / texturesToMaterials.Count);
+                
 
                 string name1 = textures.Find(x => x.Item1 == texturesToMaterials[i].Item1).Item2.name;
                 string name2 = materials.Find(x => x.Item1 == texturesToMaterials[i].Item2).Item2.name;
@@ -762,7 +762,7 @@ namespace FmdlStudio.Scripts.Static
             //Texture Video to Texture Connections
             for (int i = 0; i < videosToTextures.Count; i++)
             {
-                EditorUtility.DisplayProgressBar(BAR_STRING, $"Video to Texture Connections: {i}/{videosToTextures.Count}", (float)i / videosToTextures.Count);
+                
 
                 string name1 = textures.Find(x => x.Item1 == videosToTextures[i].Item2).Item2.name;
 
@@ -770,7 +770,7 @@ namespace FmdlStudio.Scripts.Static
                 fbx.AppendFormat("\n\tC: \"OO\",{0},{1}", videosToTextures[i].Item1, videosToTextures[i].Item2);
             } //for
 
-            EditorUtility.DisplayProgressBar(BAR_STRING, "Takes: 0/1", 0);
+            
 
             //Takes
             fbx.Append("\n}");
@@ -780,7 +780,7 @@ namespace FmdlStudio.Scripts.Static
             fbx.Append("\n\tCurrent: \"\"");
             fbx.Append("\n}");
 
-            EditorUtility.DisplayProgressBar(BAR_STRING, "Header: 0/1", 0);
+            
 
             //Header
             header.Append("; FBX 7.4.0 project file");
