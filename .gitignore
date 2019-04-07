@@ -18,7 +18,6 @@ sysinfo.txt
 ###
 [Ee]xportedObj/
 *.booproj
-*.csproj
 *.sln
 *.suo
 *.svd
@@ -77,3 +76,9 @@ FMDL-Studio-v2/.vs/FMDL-Studio-v2/v15/sqlite3/storage.ide
 /FMDL-Studio-v2/Debug - Shortcut.lnk
 /FMDL-Studio-v2/Assets/tpp
 /FMDL-Studio-v2/Assets/tpp.meta
+/FMSv2Portable/bin
+/FMSv2Portable/obj
+FMDL-Studio-v2/Assembly-CSharp-Editor.csproj
+FMDL-Studio-v2/Assembly-CSharp.csproj
+FMDL-Studio-v2/FMDL-Studio-v2.csproj
+FMDL-Studio-v2/FMDL-Studio-v2.Editor.csproj
