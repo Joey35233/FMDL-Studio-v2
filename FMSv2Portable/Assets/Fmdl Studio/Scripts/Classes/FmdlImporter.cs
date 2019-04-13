@@ -187,7 +187,8 @@ namespace FmdlStudio.Scripts.Classes
                 } //if
                 else
                 {
-                    isUnhashed = Hashing.TryGetPathName(fmdl.fmdlPathCode64s[fmdlTexture.pathIndex], out string result);
+                    string result;
+                    isUnhashed = Hashing.TryGetPathName(fmdl.fmdlPathCode64s[fmdlTexture.pathIndex], out result);
                     name = result + ".dds";
                 }
                 
