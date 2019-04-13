@@ -12,8 +12,7 @@ namespace FmdlStudio.Scripts.Classes
     [ScriptedImporter(1, "fmdl")]
     public class FmdlImporter : ScriptedImporter
     {
-        private static readonly Texture2D _defaultTex = GenerateDefaultTexture();
-        private static Texture2D DefaultTex => Instantiate(_defaultTex);
+        private static Texture2D DefaultTex => Utils.GetDefaultTextureInstance();
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
@@ -436,26 +435,6 @@ namespace FmdlStudio.Scripts.Classes
                 gameObject.name = $"{i} - {name}";
             } //for
         } //Read
-
-        private static Texture2D GenerateDefaultTexture()
-        {
-            Texture2D texture = new Texture2D(512, 512);
-
-            for (int j = 0; j < 512; j++)
-                for (int h = 0; h < 512; h++)
-                {
-                    Color c = new Color(0.25f, 0.25f, 0.25f);
-
-                    if (((j / 32) % 2 == 0 && (h / 32) % 2 != 0) || ((j / 32) % 2 != 0 && (h / 32) % 2 == 0))
-                        c = new Color(0.5f, 0.5f, 0.5f);
-
-                    texture.SetPixel(j, h, c);
-                } //for
-
-            texture.Apply();
-
-            return texture;
-        }
 
         private static Texture2D GetTexture(string path, bool isHash)
         {
